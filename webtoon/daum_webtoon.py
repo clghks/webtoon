@@ -2,6 +2,7 @@ import requests
 import time
 from .models import WebToon
 
+
 def artist_name(artists):
     return artists[0].get('name') + "/" + artists[1].get('name')
 
@@ -24,5 +25,3 @@ def daum_webtoon():
     week_list = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
     for day in week_list:
         daum_webtoon_day(day)
-
-daum_webtoon()
