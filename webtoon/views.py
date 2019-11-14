@@ -11,4 +11,5 @@ def naver_webtoon_crw(reqeust):
 
 class WebtoonList(ListView):
     model = WebToon
+    context_object_name = 'webtoon_list'
 
