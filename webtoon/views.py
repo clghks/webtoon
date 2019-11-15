@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .naver_webtoon import *
 from .daum_webtoon import *
-from django.views.generic import ListView
-
+from django.views.generic import ListView, DetailView
+from .models import *
+from django.utils import timezone
 
 # Create your views here.
 def naver_webtoon_crw(reqeust):
@@ -21,7 +22,11 @@ class WebtoonList(ListView):
     paginate_by = 30
 
     def get_queryset(self):
-        return WebToon.objects.filter(site_name='네이버')
+        query = self.request.GET.get('q')
+        if query:
+            return WebToon.objects.filter(webtoon_name__contains=query)
+        else:
+            return WebToon.objects.filter(site_name='네이버')
 
 
 class DaumWebtoonList(ListView):
@@ -31,3 +36,23 @@ class DaumWebtoonList(ListView):
     def get_queryset(self):
         return WebToon.objects.filter(site_name='다음')
 
+
+class WebtoonDetailView(DetailView):
+
+    def get_object(self, queryset=None):
+        webtoon_id = self.kwargs['pk']
+        webtoon = WebToon.objects.get(pk=webtoon_id)
+        webtoon.webtoon_views += 1
+        webtoon.save()
+
+        return webtoon
+
+
+def addComment(request, pk):
+    comment = Comment()
+    comment.webtoon_id = pk
+    comment.comment_text = request.POST['comment_text']
+    comment.create_date_time = timezone.now()
+
+    comment.save()
+    return HttpResponseRedirect('/detail/' + pk)
