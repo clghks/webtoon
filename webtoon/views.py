@@ -15,7 +15,19 @@ def daum_webtoon_crw(request):
     daum_webtoon()
     return HttpResponse("다음 웹툰 크롤링 완료")
 
+
 class WebtoonList(ListView):
     model = WebToon
-    context_object_name = 'webtoon_list'
+    paginate_by = 30
+
+    def get_queryset(self):
+        return WebToon.objects.filter(site_name='네이버')
+
+
+class DaumWebtoonList(ListView):
+    model = WebToon
+    paginate_by = 30
+
+    def get_queryset(self):
+        return WebToon.objects.filter(site_name='다음')
 
